@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1736624463249,
+      "tag": "0000_special_roxanne_simpson",
+      "breakpoints": true
+    }
+  ]
+}
