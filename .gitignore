@@ -41,7 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 
-#drizzle
-/drizzle
-/file
-/.local.db
+# Ignore the drizzle folder
+drizzle/
+
+# Ignore specific files
+file
+local.db
