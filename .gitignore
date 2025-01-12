@@ -42,6 +42,6 @@ next-env.d.ts
 
 
 #drizzle
-drizzle
-file
-.local.db
+/drizzle
+/file
+/.local.db
