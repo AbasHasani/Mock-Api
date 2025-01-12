@@ -45,7 +45,7 @@ const AiGeneratedJson = () => {
   const isValidJson = useAIJson((state) => state.isValidJson);
   const handleAddApi = async () => {
     const name = nameInputRef?.current?.value;
-    if (!name) return;
+    if (!name || !isValidJson) return;
     try {
       addApi.mutate({ content: result, userId: session?.user.id!, name });
       toast({
