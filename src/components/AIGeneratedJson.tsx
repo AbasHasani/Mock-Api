@@ -7,6 +7,9 @@ import { Loader2 } from "lucide-react";
 import Editor from "./Editor";
 import { useAIJson } from "@/store/aiJson";
 import { trpc } from "@/app/_trpc/client";
+import { useToast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/clientAuth";
+import { getFormattedDateTime } from "@/lib/utils";
 
 const AiGeneratedJson = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -14,7 +17,8 @@ const AiGeneratedJson = () => {
   const [error, setError] = useState(false);
   const changeJson = useAIJson((state) => state.changeJson);
   const result = useAIJson((state) => state.json);
-  const addApi = () => {};
+  const addApi = trpc.apisRouter.addApi.useMutation();
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const prompt = inputRef?.current?.value;
@@ -36,7 +40,26 @@ const AiGeneratedJson = () => {
     }
     setLoading(false);
   };
-  const handleAddApi = async () => {};
+  const { data: session } = authClient.useSession();
+  const { toast } = useToast();
+  const isValidJson = useAIJson((state) => state.isValidJson);
+  const handleAddApi = async () => {
+    const name = nameInputRef?.current?.value;
+    if (!name) return;
+    try {
+      addApi.mutate({ content: result, userId: session?.user.id!, name });
+      toast({
+        title: "You successfully added the api",
+        description: getFormattedDateTime(),
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: getFormattedDateTime(),
+      });
+    }
+  };
   return (
     <div className="flex flex-col gap-2 mt-3">
       <form
@@ -53,13 +76,26 @@ const AiGeneratedJson = () => {
           className="w-full"
           placeholder="ex. generate 10 products"
         />
-        <div className="flex justify-start gap-3">
+        <div className="flex flex-col items-start gap-3">
           <Button type="submit">Generate</Button>
-          {result && <Button type="button">Copy</Button>}
-          {result && (
-            <Button type="button" onClick={handleAddApi}>
-              Add to database
-            </Button>
+          {result && isValidJson ? (
+            <div className="flex items-center gap-3 h-[3rem]">
+              <Input
+                placeholder="Name of the api"
+                ref={nameInputRef}
+                className="max-w-[20rem]"
+              />
+              <Button onClick={handleAddApi} className="my-3">
+                Add to database
+              </Button>
+            </div>
+          ) : (
+            result &&
+            !isValidJson && (
+              <div className="h-[3rem] text-red-700 border-l pl-2 flex items-center font-bold">
+                You should enter valid json format.
+              </div>
+            )
           )}
         </div>
       </form>

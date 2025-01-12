@@ -8,7 +8,7 @@ interface IAIJson {
 }
 
 export const useAIJson = create<IAIJson>((set) => ({
-  json: "",
+  json: `{"items": [{"id":1}]}`,
   changeJson: (val: string) => set((state: any) => ({ json: val })),
   isValidJson: true,
   changeIsValidJson: (val: boolean) =>
